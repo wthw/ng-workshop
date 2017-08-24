@@ -1,4 +1,5 @@
 a half-baked "virtual" keyboard for Hebrew.
+See it in action: x302.net/wthw/hebrew-keyboard
 
 TODO:
  - add space key
