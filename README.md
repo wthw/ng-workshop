@@ -1,8 +1,5 @@
 # Biblical Hebrew Dictionary (Bible-Hebrew)
 
-**⚠️ IMPORTANT: MANUAL DEPENDENCY MANAGEMENT**
-Do not run `npm install` within this project unless you are the human owner. The AI agent will request dependency installations from you.
-
 ## Current Phase: 0 (Core Web App)
 
 ### 1. Initial Setup
