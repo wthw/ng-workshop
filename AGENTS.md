@@ -6,13 +6,15 @@
 
 This project is a Progressive Web App (PWA) built with Angular for learning and working with Biblical Hebrew.
 
+This is also a step to prepare me (human) to a 3.5 hour tomorrow's GDG workshop where the goal is to build "a frontend app that integrates AI using Google Agent Development Kit (ADK) + Angular", so choice of tech stack leans towards to a single vendor - Google.
+
 Primary goals:
 
 1. Offline-capable dictionary lookup
-2. Custom on-screen Hebrew keyboard
+2. Custom on-screen Hebrew keyboard (ported from `oskb/`)
 3. User dictionary stored locally
-4. Optional cloud synchronization
-5. Optional OCR for inscriptions and text fragments
+4. Optional cloud synchronization (Firebase)
+5. Optional OCR for inscriptions and text fragments (Gemini API)
 
 This project is designed to evolve incrementally during workshops and experiments, especially those involving AI features.
 
@@ -25,6 +27,7 @@ This project is designed to evolve incrementally during workshops and experiment
 * Prefer simple, readable code over abstractions.
 * Avoid introducing new libraries unless they solve a real problem.
 * Do not optimize prematurely.
+* **Styling:** Use Vanilla CSS exclusively. No Tailwind or complex UI libraries.
 
 ### 2. Offline-first
 
@@ -49,18 +52,19 @@ Do **not** enable the service worker during early development.
 ### Frontend
 
 * Angular (latest stable)
+* Angular Signals (for state management and reactivity)
 * Angular PWA support (`@angular/pwa`) — added later
 * TypeScript
 
 ### Storage
 
-* IndexedDB (preferred)
+* IndexedDB (using `idb` or `Dexie.js` wrapper)
 * LocalStorage (only for very small data)
 
 ### Optional integrations
 
-* Cloud sync: simple REST API, Firebase, or Supabase
-* OCR: external AI or vision API
+* Cloud sync: Firebase (Firestore/Auth)
+* OCR: Gemini API (Multimodal OCR and analysis)
 
 ---
 
@@ -111,14 +115,16 @@ Responsible for:
 * Search input
 * Result list
 * Entry details
+* **Data Source:** Initial data loaded from a provided JSON file.
 
 ### Keyboard
 
 Custom on-screen Hebrew keyboard:
 
-* Reusable component
-* Emits characters to input fields
-* No direct data logic
+* **Implementation:** Logic and layout must be ported from `oskb/app.js` into a native Angular component.
+* Reusable component.
+* Emits characters to input fields.
+* No direct data logic.
 
 ### User Dictionary
 
@@ -134,16 +140,16 @@ Custom on-screen Hebrew keyboard:
 
 Responsibilities:
 
-* Load dictionary data
+* Load dictionary data (JSON/IndexedDB)
 * Search entries
-* Return results
+* Return results using Signals
 
 ### `StorageService`
 
 Responsibilities:
 
 * Abstract local storage
-* Use IndexedDB internally
+* Use IndexedDB internally (`idb` or `Dexie.js`)
 * Provide simple API:
 
   * `get(key)`
@@ -154,7 +160,7 @@ Responsibilities:
 
 Responsibilities:
 
-* Push local changes
+* Push local changes to Firebase
 * Pull remote updates
 * Resolve conflicts simply (last-write-wins)
 
@@ -163,8 +169,8 @@ Responsibilities:
 Responsibilities:
 
 * Accept image input
-* Send to OCR API
-* Return recognized text
+* Send to Gemini API
+* Return recognized text and analysis
 
 ---
 
@@ -202,8 +208,8 @@ Build and test the core app as a normal Angular web application.
 
 Focus on:
 
-1. Dictionary lookup
-2. Custom keyboard
+1. Dictionary lookup (using provided JSON)
+2. Custom keyboard (ported from `oskb`)
 3. Local user dictionary
 4. Basic layout for tablet use
 
@@ -230,15 +236,13 @@ Then:
 * Test installation on tablet
 * Adjust caching if needed
 
-This phase should require minimal changes to the app logic.
-
 ---
 
 ### Phase 2 — Device-specific features
 
 After PWA is working:
 
-* Camera access for OCR
+* Camera access for OCR (Gemini)
 * Touch keyboard usability
 * Sync behavior
 
@@ -277,17 +281,16 @@ ng build
 ### TypeScript
 
 * Use strict typing.
-* Avoid `any` unless absolutely necessary.
+* Avoid `any`.
+
+### Reactivity
+
+* Use **Angular Signals** for component state and service-to-component communication.
 
 ### Components
 
 * Keep components small and focused.
 * Move logic into services.
-
-### Services
-
-* One responsibility per service.
-* Avoid tightly coupling services.
 
 ---
 
@@ -299,15 +302,15 @@ When an AI agent modifies this project:
 
 * Respect the project structure.
 * Keep changes minimal and focused.
+* Use native Signals for state.
+* Port `oskb` logic rather than using it as an external dependency.
 * Add comments when introducing non-obvious logic.
-* Prefer extending existing services over creating new ones.
 
 ### Must not do
 
-* Introduce complex state management libraries.
+* Introduce complex state management libraries (like full NgRx Store) unless requested.
 * Replace Angular defaults with alternative frameworks.
 * Add large dependencies without clear justification.
-* Change architecture without explicit instruction.
 * Enable PWA or service workers before Phase 1.
 
 ---
@@ -316,10 +319,10 @@ When an AI agent modifies this project:
 
 ### Phase 0: Core web app
 
-* Static dictionary data
+* Static dictionary data (JSON source)
 * Search functionality
-* Local storage
-* Tablet-friendly layout
+* Local storage (IndexedDB)
+* Tablet-friendly layout (Vanilla CSS)
 
 ### Phase 1: PWA support
 
@@ -329,9 +332,9 @@ When an AI agent modifies this project:
 
 ### Phase 2: Custom keyboard
 
-* Hebrew character layout **as defined in [`oskb`](oskb/index.html)**
-* It is **essential**, that custom 3-row layout strictly follows organisation defined in [`oskb`](oskb/app.js)
-* check rendition when in doubt TODO link oskb/layout.png
+* Hebrew character layout **as defined in [`oskb/app.js`](oskb/app.js)**
+* Port logic to native Angular component.
+* It is **essential**, that custom 3-row layout strictly follows organization defined in `oskb`.
 * Input integration
 
 ### Phase 3: User dictionary
@@ -341,7 +344,7 @@ When an AI agent modifies this project:
 
 ### Phase 4: Cloud sync
 
-* Simple REST endpoint
+* Firebase integration
 * Manual sync button
 
 ### Phase 5: Grammar helper
@@ -352,7 +355,7 @@ When an AI agent modifies this project:
 ### Phase 6: OCR
 
 * Camera or image upload
-* AI text recognition
+* Gemini API text recognition and analysis
 
 ---
 
@@ -361,7 +364,6 @@ When an AI agent modifies this project:
 * Complex animations
 * Real-time collaboration
 * Multi-user accounts
-* Advanced offline conflict resolution
 * Native mobile app wrappers
 
 ---
@@ -372,5 +374,6 @@ A feature is complete when:
 
 1. It works offline (once PWA is enabled).
 2. It has no console errors.
-3. It is usable on a tablet screen.
-4. Code is readable and typed.
+3. It uses Angular Signals for reactivity.
+4. It is usable on a tablet screen.
+5. Code is readable and typed.
