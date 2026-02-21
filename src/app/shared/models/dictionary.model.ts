@@ -1,3 +1,8 @@
+export interface DictionaryFile {
+  version: string;
+  entries: DictionaryEntry[];
+}
+
 export interface DictionaryEntry {
   id: string;
   lemma: string;

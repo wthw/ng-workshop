@@ -40,6 +40,6 @@ ng add @angular/pwa  # Phase 5 only
 
 FIXME `this.dmq` referencing keyboard button (Dagesh-or-Mapiq) - right-most in the middle row - has grey background, like special keys Backspace/Space. Should use same style as other letter keys.
 
-FIXME `strong43.json` (loaded via dictionary.json symlink) shows 'Dictionary loaded: 10 entries'. Add `console.error` in `fetchDictionary` error-path (`dictionary.service.ts`)
+FIXED `dictionary.service.ts`: version field now lives in `dictionary.json` (`{ "version": "...", "entries": [...] }`). On each load the app fetches the file, compares its `version` to `localStorage['dict-data-version']`, and re-seeds IndexedDB only when changed. Falls back to IndexedDB cache when offline. Bump `version` in the JSON whenever seed data changes — no TS change needed. After Phase 5 the service worker fetch will make the version check offline-capable with zero code changes.
 
 *(Add decisions, blockers, and notes here as the project progresses.)*

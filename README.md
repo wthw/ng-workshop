@@ -1,25 +1,23 @@
 # Biblical Hebrew Dictionary (Bible-Hebrew)
 
-## Current Phase: 0 (Core Web App)
+## Current Phase: 0-1 (Core web app, on-screen keyboard)
 
-### 1. Initial Setup
-Please run the following command to install the base dependencies:
+### Setup
+Run the following command to install the base dependencies:
 ```bash
 npm install
-```
-
-### 2. Storage Dependency
-We will use `idb` for a lightweight IndexedDB wrapper. Please install it:
-```bash
-npm install idb
 ```
 
 ---
 
 ## Project Overview
-This project is an Angular-based Progressive Web App (PWA) for learning and working with Biblical Hebrew, focusing on an offline-first experience with a custom keyboard and OCR capabilities.
+This project wants to be a Web App for learning and working with Biblical Hebrew,
+focusing on an offline-first experience and being the utmost help of learners
+at every step of their encounter with this ancient language.
 
-Detailed project goals, tech stack, and roadmap are maintained in [AGENTS.md](AGENTS.md).
+Detailed project goals and tech stack are in [AGENTS.md](AGENTS.md);
+implementation notes in [IMPLEMENTATION.md](IMPLEMENTATION.md);
+roadmap and known issues in [STATUS.md](STATUS.md).
 
 ## Development Commands
 
@@ -27,7 +25,17 @@ Detailed project goals, tech stack, and roadmap are maintained in [AGENTS.md](AG
 - **Build:** `ng build`
 - **Test:** `ng test`
 
-## Project Structure
-- `src/app/core/`: Singleton services (Storage, Dictionary, OCR).
-- `src/app/features/`: Main features (Dictionary, Keyboard, User-Dictionary).
-- `src/app/shared/`: Reusable components and models.
+## Updating the seed dictionary
+
+[`public/data/dictionary.json`](public/data/dictionary.json) is a symlink pointing
+to the active data file (e.g. `strong43.json`). Its format is:
+
+```json
+{
+  "version": "2",
+  "entries": [ ... ]
+}
+```
+
+Whenever you change the content of the file (add/remove/edit entries, or retarget the symlink), **bump the `"version"` string**.
+The app compares this against `localStorage['dict-data-version']` on every load and re-seeds IndexedDB automatically when they differ.

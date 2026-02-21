@@ -4,22 +4,25 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { DictionaryService } from './dictionary.service';
 import { StorageService } from './storage.service';
-import { DictionaryEntry } from '../../shared/models/dictionary.model';
+import { DictionaryEntry, DictionaryFile } from '../../shared/models/dictionary.model';
 
 describe('DictionaryService', () => {
   let service: DictionaryService;
   let httpMock: HttpTestingController;
   let storageServiceMock: any;
 
-  const mockData: DictionaryEntry[] = [
+  const mockEntries: DictionaryEntry[] = [
     { id: 'h1', lemma: 'א', meaning: 'alpha', transliteration: 'a' },
     { id: 'h2', lemma: 'ב', meaning: 'beta', transliteration: 'b' }
   ];
+  const mockFile: DictionaryFile = { version: 'test-1', entries: mockEntries };
 
   beforeEach(() => {
+    localStorage.clear();
     storageServiceMock = {
       getAll: vi.fn(() => Promise.resolve([])),
-      put: vi.fn(() => Promise.resolve())
+      put: vi.fn(() => Promise.resolve()),
+      clear: vi.fn(() => Promise.resolve())
     };
 
     TestBed.configureTestingModule({
@@ -44,7 +47,7 @@ describe('DictionaryService', () => {
     const initPromise = service.init();
     
     const req = httpMock.expectOne('/data/dictionary.json');
-    req.flush(mockData);
+    req.flush(mockFile);
 
     await initPromise;
 
