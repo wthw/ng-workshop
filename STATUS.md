@@ -38,7 +38,7 @@ ng add @angular/pwa  # Phase 5 only
 
 ## Known Issues / Notes
 
-FIXME `this.dmq` referencing keyboard button (Dagesh-or-Mapiq) - right-most in the middle row - has grey background, like special keys Backspace/Space. Should use same style as other letter keys.
+FIXED `this.dmq` keyboard button (Dagesh-or-Mapiq): removed `isVowel`/`isSpecial` classification logic — all keys (but Baskspace and Space) now share uniform styling.
 
 FIXED `dictionary.service.ts`: version field now lives in `dictionary.json` (`{ "version": "...", "entries": [...] }`). On each load the app fetches the file, compares its `version` to `localStorage['dict-data-version']`, and re-seeds IndexedDB only when changed. Falls back to IndexedDB cache when offline. Bump `version` in the JSON whenever seed data changes — no TS change needed. After Phase 5 the service worker fetch will make the version check offline-capable with zero code changes.
 

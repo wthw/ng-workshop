@@ -12,8 +12,7 @@ import { CommonModule } from '@angular/common';
           <button
             type="button"
             (click)="onKeyClick(key)"
-            [class.vowel]="isVowel(key)"
-            [class.special]="isSpecial(key)"
+            [class.special]="key === '⌫' || key === ' '"
           >
             {{ key === ' ' ? '␣' : key }}
           </button>
@@ -48,16 +47,10 @@ import { CommonModule } from '@angular/common';
       background: #e0e0e0;
       transform: translateY(1px);
     }
-    .vowel {
-      color: #0066cc;
-      background: #f9f9f9;
-      font-size: 1.4rem;
-    }
     .special {
       background: #eee;
       font-weight: bold;
     }
-    
     @media (max-width: 600px) {
       .keyboard-grid {
         gap: 2px;
@@ -110,12 +103,4 @@ export class KeyboardComponent {
     }
   }
 
-  isVowel(key: string): boolean {
-    const code = key.charCodeAt(0);
-    return code >= 0x05B0 && code <= 0x05BD;
-  }
-
-  isSpecial(key: string): boolean {
-    return key === '⌫' || key === ' ';
-  }
 }
